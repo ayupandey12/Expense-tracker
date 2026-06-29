@@ -10,7 +10,10 @@
   "author": "",
   "license": "ISC",
   "type": "module",
-  "bin":{
-    "expense-tracker":"./index.js"
+  "bin": {
+    "expense-tracker": "./index.js"
+  },
+  "dependencies": {
+    "commander": "^15.0.0"
   }
 }
