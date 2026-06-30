@@ -23,6 +23,12 @@ function addexpense({description,amount}){
   }
   expenses.push(newexpense);
 }
+function deletebyid({id})
+{
+const d=expenses.filter((e)=>{return e.id!==id});
+fs.writeFileSync(p,JSON.stringify(d),'utf8');
+process.exit(1);
+}
 program.command("add").description("add expense")
 .requiredOption("--description <text>","add description")
 .requiredOption("--amount <number>","add amount")
@@ -37,7 +43,8 @@ program.command("add").description("add expense")
 program.command("delete").description("delete the expense with given id")
 .requiredOption("--id <number>","give the id")
 .action((option)=>{
-  console.log(option.id)
+  deletebyid({id:Number(option.id)});
+  console.log(`${id} is deleted`);
 })
 program.command("list")
 .description("list of expenses")
