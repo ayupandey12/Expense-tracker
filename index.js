@@ -1,11 +1,38 @@
 #!/usr/bin/env node
 import process from "node:process"
 import { program } from "commander"
+import path from "node:path"
+import * as fs from "node:fs"
+const p=path.join(import.meta.dirname,"./expense.json");
+try {
+ var d= fs.readFileSync(p,"utf8");
+} catch (error) {
+  fs.writeFileSync(p,JSON.stringify([]),'utf8');
+  var d=fs.readFileSync(p,'utf8');
+}
+const expenses=d?JSON.parse(d):[];
+
+function addexpense({description,amount}){
+  const size=expenses.length;
+  const id=size>0?expenses[size-1].id+1:1
+  const newexpense={
+   id:id,
+   date:new Date().toLocaleDateString(),
+   description:description,
+   amount:Number(amount)
+  }
+  expenses.push(newexpense);
+}
 program.command("add").description("add expense")
 .requiredOption("--description <text>","add description")
 .requiredOption("--amount <number>","add amount")
 .action((option)=>{
-  console.log(option.amount,option.description)
+  if(option.description===''||option.amount==='0')
+  {
+    console.log("input data is invalid");
+    process.exit(1);
+  }
+  addexpense({description:option.description,amount:option.amount});
 })
 program.command("delete").description("delete the expense with given id")
 .requiredOption("--id <number>","give the id")
@@ -15,7 +42,7 @@ program.command("delete").description("delete the expense with given id")
 program.command("list")
 .description("list of expenses")
 .action(()=>{
-    console.log("ok");
+    console.log(expenses);
 })
 program.command("summary")
 .description("total expense")
@@ -24,3 +51,5 @@ program.command("summary")
 })
 
 program.parse(process.argv)
+
+fs.writeFileSync(p,JSON.stringify(expenses),'utf8');
