@@ -56,7 +56,11 @@ program.command("list")
 program.command("summary")
 .description("total expense")
 .action(()=>{
-    console.log("ok1");
+   let sum=0;
+    expenses.forEach(element => {
+      sum+=element.amount
+    });
+    console.log(`total expense -> ${sum}$`);
 })
 program.command("download")
 .description("dowload json in csvfile")
