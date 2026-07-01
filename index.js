@@ -2,6 +2,8 @@
 import process from "node:process"
 import { program } from "commander"
 import path from "node:path"
+import os from 'os'
+import { Parser } from '@json2csv/plainjs'; 
 import * as fs from "node:fs"
 const p=path.join(import.meta.dirname,"./expense.json");
 try {
@@ -17,7 +19,7 @@ function addexpense({description,amount}){
   const id=size>0?expenses[size-1].id+1:1
   const newexpense={
    id:id,
-   date:new Date().toLocaleDateString(),
+   date:new Date(),
    description:description,
    amount:Number(amount)
   }
@@ -55,6 +57,22 @@ program.command("summary")
 .description("total expense")
 .action(()=>{
     console.log("ok1");
+})
+program.command("download")
+.description("dowload json in csvfile")
+.action(()=>{
+    const targetPath = path.join(os.homedir(), 'Downloads', 'expenses.csv');
+
+  try {
+    // Automatically flattens and maps keys to CSV columns
+    const parser = new Parser();
+    const csv = parser.parse(expenses);
+
+   fs.writeFileSync(targetPath, csv, 'utf-8');
+    console.log(`🚀 Exported to: ${targetPath}`);
+  } catch (err) {
+    console.error(err);
+  }
 })
 
 program.parse(process.argv)
